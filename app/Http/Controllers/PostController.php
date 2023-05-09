@@ -11,6 +11,15 @@ use Illuminate\View\View;
 class PostController extends Controller
 {
     /**
+     * Create a new controller instance.
+     * 
+     * @return void
+     */
+    public function __construct() {
+        $this->middleware('auth', ['except' => ['index']]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(): View
