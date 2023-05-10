@@ -44,9 +44,23 @@ class PostController extends Controller
     {
         $validated = $request->validate([
             'message' => 'required|string|max:255',
+            'image' => 'image|nullable|max:1999',
         ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = $file->getClientOriginalName();
+            $fileNameToStore = time() . '_' . $fileName;
+            $file->storeAs('public/images', $fileNameToStore);
+        }
+        else {
+            $fileNameToStore = 'no-image.jpg';
+        }
  
-        $request->user()->posts()->create($validated);
+        $request->user()->posts()->create([
+            'message' => $validated['message'],
+            'image_name' => $fileNameToStore,
+        ]);
  
         return redirect(route('posts.index'));
     }

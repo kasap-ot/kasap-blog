@@ -1,13 +1,14 @@
 <x-app-layout>
     <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
         @if (Auth::check())
-            <form method="POST" action="{{ route('posts.store') }}">
+            <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
                 @csrf
                 <textarea
                     name="message"
                     placeholder="{{ __('What\'s on your mind?') }}"
                     class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
                 >{{ old('message') }}</textarea>
+                <input type="file" name="image"> <br>
                 <x-input-error :messages="$errors->get('message')" class="mt-2" />
                 <x-primary-button class="mt-4">{{ __('Post') }}</x-primary-button>
             </form>
@@ -53,6 +54,8 @@
                             @endif
                         </div>
                         <p class="mt-4 text-lg text-gray-900">{{ $post->message }}</p>
+                        <br>
+                        <img src="/storage/images/{{ $post->image_name }}">
                     </div>
                 </div>
             @endforeach
