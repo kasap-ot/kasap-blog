@@ -30,6 +30,15 @@ class PostController extends Controller
     }
 
     /**
+     * Display the latest 3 posts. Hard-codded!
+     */
+    public function show_latest() {
+        return view('posts.index', [
+            'posts' => Post::with('user')->latest()->take(3)->get(),
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -110,4 +119,5 @@ class PostController extends Controller
 
         return redirect(route('posts.index'));
     }
+
 }

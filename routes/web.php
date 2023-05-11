@@ -32,4 +32,6 @@ Route::middleware('auth')->group(function () {
 Route::resource('posts', PostController::class)
     ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
+Route::get('/posts/latest', 'App\Http\Controllers\PostController@show_latest');
+
 require __DIR__.'/auth.php';
