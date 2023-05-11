@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -101,9 +102,19 @@ class PostController extends Controller
 
         $validated = $request->validate([
             'message' => 'required|string|max:255',
+            'image' => 'nullable|image|max:1999',
         ]);
 
-        $post->update($validated);
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = $file->getClientOriginalName();
+            $fileNameToStore = time() . '_' . $fileName;
+            $file->storeAs('public/images', $fileNameToStore);
+            
+            $post->update(['image_name' => $fileNameToStore]);
+        }
+
+        $post->update(['message' => $validated['message']]);
 
         return redirect(route('posts.index'));
     }
@@ -114,6 +125,10 @@ class PostController extends Controller
     public function destroy(Post $post): RedirectResponse
     {
         $this->authorize('delete', $post);
+
+        if ($post->image_name != 'no-image.jpg') {
+            Storage::delete('public/images/' . $post->image_name);
+        }
 
         $post->delete();
 
